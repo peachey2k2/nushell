@@ -9,7 +9,14 @@ pub fn open(args: CommandArgs) -> Result<OutputStream, ShellError> {
         return Err(ShellError::string("open requires a filepath or url"));
     }
 
-    let cwd = args.env.lock().unwrap().cwd().to_path_buf();
+    let cwd = args
+        .env
+        .lock()
+        .unwrap()
+        .first()
+        .unwrap()
+        .path()
+        .to_path_buf();
     let mut full_path = PathBuf::from(cwd);
 
     let (file_extension, contents) = match &args.positional[0].item {
