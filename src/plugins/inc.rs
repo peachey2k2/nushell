@@ -1,4 +1,8 @@
-use nu::{serve_plugin, Args, Plugin, Primitive, ReturnValue, ShellError, Spanned, Value};
+use indexmap::IndexMap;
+use nu::{
+    serve_plugin, Args, CommandConfig, Plugin, PositionalType, Primitive, ReturnValue, ShellError,
+    Spanned, Value,
+};
 
 struct Inc {
     inc_by: i64,
@@ -10,6 +14,19 @@ impl Inc {
 }
 
 impl Plugin for Inc {
+    fn config(&mut self) -> Result<CommandConfig, ShellError> {
+        Ok(CommandConfig {
+            name: "inc".to_string(),
+            mandatory_positional: vec![],
+            optional_positional: vec![PositionalType::Value("Increment".into())],
+            can_load: vec![],
+            can_save: vec![],
+            is_filter: true,
+            is_sink: false,
+            named: IndexMap::new(),
+            rest_positional: true,
+        })
+    }
     fn begin_filter(&mut self, args: Args) -> Result<(), ShellError> {
         if let Some(args) = args.positional {
             for arg in args {
