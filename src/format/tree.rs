@@ -7,14 +7,8 @@ use ptree::print_config::PrintConfig;
 use ptree::style::{Color, Style};
 use ptree::TreeBuilder;
 
-// An entries list is printed like this:
-//
-// name         : ...
-// name2        : ...
-// another_name : ...
 #[derive(new)]
 pub struct TreeView {
-    //entries: Vec<(crate::object::DescriptorName, Value)>,
     tree: StringItem,
 }
 
@@ -39,6 +33,7 @@ impl TreeView {
             Value::Block(_) => {}
             Value::Error(_) => {}
             Value::Filesystem => {}
+            Value::Binary(_) => {}
         }
     }
     crate fn from_value(value: &Value) -> TreeView {
@@ -73,7 +68,6 @@ impl RenderView for TreeView {
                 bold: true,
                 ..Style::default()
             };
-            //config.characters = UTF_CHARS_BOLD.into();
             config.indent = 4;
             config
         };
