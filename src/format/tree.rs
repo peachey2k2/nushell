@@ -7,14 +7,8 @@ use ptree::print_config::PrintConfig;
 use ptree::style::{Color, Style};
 use ptree::TreeBuilder;
 
-// An entries list is printed like this:
-//
-// name         : ...
-// name2        : ...
-// another_name : ...
 #[derive(new)]
 pub struct TreeView {
-    //entries: Vec<(crate::object::DescriptorName, Value)>,
     tree: StringItem,
 }
 
@@ -26,7 +20,7 @@ impl TreeView {
             }
             Value::Object(o) => {
                 for (k, v) in o.entries.iter() {
-                    builder = builder.begin_child(k.name.display().to_string());
+                    builder = builder.begin_child(k.clone());
                     Self::from_value_helper(v, builder);
                     builder = builder.end_child();
                 }
@@ -39,6 +33,7 @@ impl TreeView {
             Value::Block(_) => {}
             Value::Error(_) => {}
             Value::Filesystem => {}
+            Value::Binary(_) => {}
         }
     }
     crate fn from_value(value: &Value) -> TreeView {
@@ -49,7 +44,7 @@ impl TreeView {
 
         for desc in descs {
             let value = value.get_data(&desc);
-            builder = builder.begin_child(desc.name.display().to_string());
+            builder = builder.begin_child(desc.clone());
             Self::from_value_helper(value.borrow(), &mut builder);
             builder = builder.end_child();
             //entries.push((desc.name.clone(), value.borrow().copy()))
@@ -73,7 +68,6 @@ impl RenderView for TreeView {
                 bold: true,
                 ..Style::default()
             };
-            //config.characters = UTF_CHARS_BOLD.into();
             config.indent = 4;
             config
         };
