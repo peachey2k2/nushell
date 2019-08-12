@@ -2,8 +2,6 @@ use crate::errors::ShellError;
 use crate::parser::CommandRegistry;
 use crate::prelude::*;
 
-// TODO: "Amount remaining" wrapper
-
 pub fn first(args: CommandArgs, registry: &CommandRegistry) -> Result<OutputStream, ShellError> {
     let args = args.evaluate_once(registry)?;
 
