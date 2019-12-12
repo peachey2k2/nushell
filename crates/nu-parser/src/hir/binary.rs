@@ -1,4 +1,4 @@
-use crate::{hir::Expression, Operator};
+use crate::{hir::Expression, CompareOperator};
 
 use derive_new::new;
 use getset::Getters;
@@ -11,7 +11,7 @@ use serde::{Deserialize, Serialize};
 #[get = "pub"]
 pub struct Binary {
     left: Expression,
-    op: Spanned<Operator>,
+    op: Spanned<CompareOperator>,
     right: Expression,
 }
 
