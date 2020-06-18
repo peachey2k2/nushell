@@ -58,7 +58,13 @@ impl WholeStreamCommand for SubCommand {
 pub fn average(values: &[Value], name: &Tag) -> Result<Value, ShellError> {
     let sum = reducer_for(Reduce::Sum);
 
-    let number = BigDecimal::from_usize(values.len()).expect("expected a usize-sized bigdecimal");
+    let number = BigDecimal::from_usize(values.len()).ok_or_else(|| {
+        ShellError::labeled_error(
+            "could not convert to big decimal",
+            "could not convert to big decimal",
+            &name.span,
+        )
+    })?;
 
     let total_rows = UntaggedValue::decimal(number);
     let total = sum(Value::zero(), values.to_vec())?;
