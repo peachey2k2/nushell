@@ -85,9 +85,11 @@ pub async fn set(args: CommandArgs) -> Result<OutputStream, ShellError> {
     ctx.scope.enter_scope();
     ctx.scope.add_vars(&captured.entries);
 
-    let value = evaluate_baseline_expr(&expr, &ctx).await?;
+    let value = evaluate_baseline_expr(&expr, &ctx).await;
 
     ctx.scope.exit_scope();
+
+    let value = value?;
 
     let name = if name.item.starts_with('$') {
         name.item.clone()
