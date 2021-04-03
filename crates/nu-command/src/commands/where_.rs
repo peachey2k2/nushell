@@ -6,15 +6,15 @@ use nu_protocol::{
     hir::CapturedBlock, hir::ClassifiedCommand, ReturnSuccess, Signature, SyntaxShape,
 };
 
-pub struct Where;
+pub struct Command;
 
 #[derive(Deserialize)]
-pub struct WhereArgs {
+pub struct Arguments {
     block: CapturedBlock,
 }
 
 #[async_trait]
-impl WholeStreamCommand for Where {
+impl WholeStreamCommand for Command {
     fn name(&self) -> &str {
         "where"
     }
@@ -63,7 +63,7 @@ impl WholeStreamCommand for Where {
 async fn where_command(raw_args: CommandArgs) -> Result<OutputStream, ShellError> {
     let ctx = Arc::new(EvaluationContext::from_args(&raw_args));
     let tag = raw_args.call_info.name_tag.clone();
-    let (WhereArgs { block }, input) = raw_args.process().await?;
+    let (Arguments { block }, input) = raw_args.process().await?;
     let condition = {
         if block.block.block.len() != 1 {
             return Err(ShellError::labeled_error(
@@ -127,13 +127,13 @@ async fn where_command(raw_args: CommandArgs) -> Result<OutputStream, ShellError
 
 #[cfg(test)]
 mod tests {
+    use super::Command;
     use super::ShellError;
-    use super::Where;
 
     #[test]
     fn examples_work_as_expected() -> Result<(), ShellError> {
         use crate::examples::test as test_examples;
 
-        test_examples(Where {})
+        test_examples(Command {})
     }
 }
