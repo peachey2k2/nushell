@@ -1,10 +1,7 @@
 use crate::prelude::*;
 use nu_engine::WholeStreamCommand;
 use nu_errors::ShellError;
-use nu_protocol::{
-    dataframe::{NuDataFrame, PolarsData},
-    Signature, SyntaxShape, UntaggedValue, Value,
-};
+use nu_protocol::{dataframe::NuDataFrame, Signature, SyntaxShape};
 
 use nu_source::Tagged;
 
@@ -21,7 +18,7 @@ impl WholeStreamCommand for DataFrame {
 
     fn signature(&self) -> Signature {
         Signature::build("pls select").optional(
-            "n_rows",
+            "rows",
             SyntaxShape::Number,
             "Number of rows for head",
         )
@@ -34,7 +31,7 @@ impl WholeStreamCommand for DataFrame {
     fn examples(&self) -> Vec<Example> {
         vec![Example {
             description: "Create new dataframe with head rows",
-            example: "[[a b]; [1 2] [3 4]] | pls convert | pls head",
+            example: "[[a b]; [1 2] [3 4]] | pls to-df | pls head",
             result: None,
         }]
     }
@@ -50,31 +47,8 @@ fn command(args: CommandArgs) -> Result<OutputStream, ShellError> {
         None => 5,
     };
 
-    match args.input.next() {
-        None => Err(ShellError::labeled_error(
-            "No input received",
-            "missing dataframe input from stream",
-            &tag,
-        )),
-        Some(value) => {
-            if let UntaggedValue::DataFrame(PolarsData::EagerDataFrame(df)) = value.value {
-                let res = df.as_ref().head(Some(rows));
+    let df = NuDataFrame::try_from_stream(&mut args.input, &tag.span)?;
+    let res = df.as_ref().head(Some(rows));
 
-                let value = Value {
-                    value: UntaggedValue::DataFrame(PolarsData::EagerDataFrame(NuDataFrame::new(
-                        res,
-                    ))),
-                    tag: tag.clone(),
-                };
-
-                Ok(OutputStream::one(value))
-            } else {
-                Err(ShellError::labeled_error(
-                    "No dataframe in stream",
-                    "no dataframe found in input stream",
-                    &tag,
-                ))
-            }
-        }
-    }
+    Ok(OutputStream::one(NuDataFrame::dataframe_to_value(res, tag)))
 }
