@@ -63,7 +63,7 @@ impl Command for For {
                         state.add_var(var_id, x.clone());
 
                         //FIXME: DON'T UNWRAP
-                        eval_block(&state, block, input.clone()).unwrap()
+                        eval_block(&state, block, Value::nothing()).unwrap()
                     })
                     .into_value_stream(),
                 span: call.head,
