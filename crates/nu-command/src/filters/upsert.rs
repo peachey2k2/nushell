@@ -112,7 +112,7 @@ fn upsert(
                 match output {
                     Ok(pd) => {
                         if let Err(e) =
-                            input.replace_data_at_cell_path(&cell_path.members, pd.into_value(span))
+                            input.upsert_data_at_cell_path(&cell_path.members, pd.into_value(span))
                         {
                             return Value::Error { error: e };
                         }
@@ -129,7 +129,7 @@ fn upsert(
             move |mut input| {
                 let replacement = replacement.clone();
 
-                if let Err(e) = input.replace_data_at_cell_path(&cell_path.members, replacement) {
+                if let Err(e) = input.upsert_data_at_cell_path(&cell_path.members, replacement) {
                     return Value::Error { error: e };
                 }
 
