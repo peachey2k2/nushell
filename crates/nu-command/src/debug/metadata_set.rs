@@ -24,7 +24,7 @@ impl Command for MetadataSet {
             )
             .switch(
                 "datasource-ls",
-                "Assign the DataSource::Ls metadata to the input.",
+                "(DEPRECATED) Assign the DataSource::Ls metadata to the input.",
                 Some('l'),
             )
             .named(
@@ -183,18 +183,13 @@ impl Command for MetadataSet {
     fn examples(&self) -> Vec<Example<'_>> {
         vec![
             Example {
-                description: "Set the metadata of a table literal.",
-                example: "[[name color]; [Cargo.lock '#ff0000'] [Cargo.toml '#00ff00'] [README.md '#0000ff']] | metadata set --datasource-ls",
+                description: "Set the metadata of a table literal so the `name` column is treated as a path.",
+                example: "[[name color]; [Cargo.lock '#ff0000'] [Cargo.toml '#00ff00'] [README.md '#0000ff']] | metadata set --path-columns [name]",
                 result: None,
             },
             Example {
                 description: "Set the metadata of a file path.",
                 example: "'crates' | metadata set --datasource-filepath $'(pwd)/crates'",
-                result: None,
-            },
-            Example {
-                description: "Set the path columns metadata.",
-                example: "glob * | wrap path | metadata set --path-columns [path]",
                 result: None,
             },
             Example {
